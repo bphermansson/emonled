@@ -147,12 +147,21 @@ void loop()
       tens = ((itime/10)%10);
       hundreds = ((itime/100)%10);
       thousands = (itime/1000);
+      
+      // Long time since last transmission?
+      long timesincetrans = millis()-last_emonbase;
+      if (timesincetrans > 1400000) { // 700000mS = 11,6 minutes (times 2)
+        ones = 11;
+        tens = 11;
+        hundreds = 11;
+        thousands = 11; 
+      }
     }
     else { 
       // Display outdoor temp
       
-      //Serial.print("Outdoor temp: ");      
-      //Serial.println(outtemp);   
+      Serial.print("Outdoor temp: ");      
+      Serial.println(outtemp);   
       // outtemp = emontx.temp;
       
       // Test negative values
@@ -161,19 +170,19 @@ void loop()
       if (outtemp < 0) {
         // Set flag for value below zero
         belowzero = 1;
-        outtemp = abs(outtemp); // Remove '-' sign
+        outtempclean = abs(outtemp); // Remove '-' sign
       }
       else {
         belowzero = 0; 
       }
       
-      ones = ((outtemp/10)%10);
-      tens = ((outtemp/100)%10);
-      hundreds = (outtemp/1000);
+      ones = ((outtempclean/10)%10);
+      tens = ((outtempclean/100)%10);
+      hundreds = (outtempclean/1000);
       
       if (belowzero == 1) {  // Negative value
          // Below 10 degress, adjust display 
-          if (outtemp < 1000){
+          if (outtempclean < 1000){
             thousands = 12;  // Blank
             hundreds = 11; // -
           }
@@ -181,7 +190,7 @@ void loop()
             thousands = 11;  // '-' sign
           }
       }
-      else if (outtemp < 1000){
+      else if (outtempclean < 1000){
           hundreds = 12; // Blank   
           thousands = 12;  // Blank
       }
@@ -194,12 +203,12 @@ void loop()
       // If so, the temperature will be wrong.
       // Lets show an error message instead. 
       long timesincetrans = millis()-last_emontx;
-      if (timesincetrans > 700000) { // 700000mS = 11,6 minutes
+      if (timesincetrans > 1400000) { // 700000mS = 11,6 minutes (times 2)
         Serial.print("Time since last transmission = ");
         Serial.print (timesincetrans);
         Serial.println (" mS");
         ones = 11;
-        tens = 12;
+        tens = 11;
         hundreds = 11;
         thousands = 11; 
       }

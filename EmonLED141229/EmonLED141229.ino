@@ -46,7 +46,7 @@ byte digit[5]={B01111111, B10111111, B11011111, B11101111};
 #define MYNODE 20            // Should be unique on network, node ID 30 reserved for base station
 #define RF_freq RF12_433MHZ     // frequency - match to same frequency as RFM12B module (change to 868Mhz or 915Mhz if appropriate)
 #define group 210 
-int outtemp, belowzero;
+int outtemp, belowzero, outtempclean;
 
 // DS18B20 for temperature readings
 #define ONE_WIRE_BUS 6              // temperature sensor connection - hard wired 
@@ -148,9 +148,9 @@ void loop()
       hundreds = ((itime/100)%10);
       thousands = (itime/1000);
       
-      // Long time since last transmission?
+      // Long time since last time transmission from Base?
       long timesincetrans = millis()-last_emonbase;
-      if (timesincetrans > 1400000) { // 700000mS = 11,6 minutes (times 2)
+      if (timesincetrans > 240000) { // 240000mS = 4 minutes 
         ones = 11;
         tens = 11;
         hundreds = 11;
